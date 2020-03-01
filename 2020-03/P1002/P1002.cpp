@@ -1,20 +1,43 @@
-// P1002.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
+#include <vector>
+#include <cstdint>
+
+using namespace std;
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	ios_base::sync_with_stdio(false);
+	int m, n, x, y;
+	cin >> m >> n >> x >> y;
+	auto dp = vector<vector<int64_t>>(m+1, vector<int64_t>(n+1, 0));
+	int dir[9][2] = {{0,0},{-2,-1},{-2,1},{-1,-2},{-1,2},{1,-2},{1,2},{2,-1},{2,1}};
+	for (auto d : dir) {
+		if (x+d[0] >= 0 && x+d[0] <= m && y+d[1] >= 0 && y+d[1] <= n) {
+			dp[x+d[0]][y+d[1]] = -1;
+		}
+	}
+	if (dp[0][0] == -1 || dp[m][n] == -1) {
+		cout << 0 << endl;
+		return 0;
+	}
+
+	for (int i = 0; i <= m; i++) {
+		for (int j = 0; j <= n; j++) {
+			if (dp[i][j] == -1) {
+				dp[i][j] = 0;
+				continue;
+			}
+			if (i == 0 && j == 0) {
+				dp[i][j] = 1;
+			}
+			else {
+				int64_t up = (i == 0 ? 0 : dp[i - 1][j]);
+				int64_t lt = (j == 0 ? 0 : dp[i][j - 1]);
+				dp[i][j] = up + lt;
+			}
+		}
+	}
+
+	cout << dp[m][n] << endl;
+	return 0;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
